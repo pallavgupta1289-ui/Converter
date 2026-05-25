@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter%</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;500;700&display=swap');
+
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: #18181b;
+            --border: #27272a;
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --secondary: #3b82f6;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 0%, #1f1f2e 0%, transparent 70%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px inset rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a1a1aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .btn-icon {
+            background: #27272a;
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .io-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .box-wrapper {
+            position: relative;
+        }
+
+        .box-label {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--card-bg);
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: #09090b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            resize: none;
+            line-height: 1.5;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: transparent; }
+        textarea::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .stats span { color: var(--text-main); font-weight: 600; }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: #27272a;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn:hover { background: #3f3f46; }
+        
+        .btn-copy {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-copy:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .error-glow {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Converter%</h1>
+        </div>
+
+        <div class="control-panel">
+            <select id="inputType">
+                <option value="text" selected>Text (UTF-8)</option>
+                <option value="bin">Binary (Base 2)</option>
+                <option value="hex">Hexadecimal (Base 16)</option>
+                <option value="dec">Decimal (Base 10)</option>
+                <option value="oct">Octal (Base 8)</option>
+                <option value="b64">Base64</option>
+                <option value="url">URL Encoded</option>
+                <option value="morse">Morse Code</option>
+                <option value="rot13">ROT13 Cipher</option>
+                <option value="html">HTML Entities</option>
+            </select>
+
+            <button class="btn-icon" onclick="swapEngines()" title="Swap Inputs">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="m11 18-4 4-4-4"/><path d="M17 14V2"/><path d="m13 6 4-4 4 4"/></svg>
+            </button>
+
+            <select id="outputType">
+                <option value="text">Text (UTF-8)</option>
+                <option value="bin" selected>Binary (Base 2)</option>
+                <option value="hex">Hexadecimal (Base 16)</option>
+                <option value="dec">Decimal (Base 10)</option>
+                <option value="oct">Octal (Base 8)</option>
+                <option value="b64">Base64</option>
+                <option value="url">URL Encoded</option>
+                <option value="morse">Morse Code</option>
+                <option value="rot13">ROT13 Cipher</option>
+                <option value="html">HTML Entities</option>
+            </select>
+        </div>
+
+        <div class="io-container">
+            <div class="box-wrapper">
+                <div class="box-label">Input Data</div>
+                <textarea id="inputArea" placeholder="Start typing... conversion is instant."></textarea>
+            </div>
+            
+            <div class="box-wrapper">
+                <div class="box-label">Output Result</div>
+                <textarea id="outputArea" readonly placeholder="Result will materialize here..."></textarea>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="stats">
+                <div>Length: <span id="charCount">0</span></div>
+                <div>Size: <span id="byteCount">0 B</span></div>
+            </div>
+            <div class="action-btns">
+                <button class="btn" onclick="document.getElementById('inputArea').value = ''; processConversion();">Clear</button>
+                <button class="btn btn-copy" onclick="copyToClipboard()">Copy Result</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Copied to clipboard! 🚀</div>
+
+    <script>
+        const inputArea = document.getElementById('inputArea');
+        const outputArea = document.getElementById('outputArea');
+        const inputType = document.getElementById('inputType');
+        const outputType = document.getElementById('outputType');
+        const charCount = document.getElementById('charCount');
+        const byteCount = document.getElementById('byteCount');
+
+        inputArea.addEventListener('input', processConversion);
+        inputType.addEventListener('change', processConversion);
+        outputType.addEventListener('change', processConversion);
+
+        const morseDict = {
+            'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','0':'-----', ' ':'/'
+        };
+        const revMorseDict = Object.fromEntries(Object.entries(morseDict).map(([k, v]) => [v, k]));
+
+        function swapEngines() {
+            const temp = inputType.value;
+            inputType.value = outputType.value;
+            outputType.value = temp;
+            
+            if (outputArea.value && !outputArea.classList.contains('error-glow')) {
+                inputArea.value = outputArea.value;
+            }
+            processConversion();
+        }
+
+        function updateStats(str) {
+            charCount.textContent = str.length;
+            byteCount.textContent = new Blob([str]).size + " B";
+        }
+
+        function processConversion() {
+            const val = inputArea.value;
+            const inT = inputType.value;
+            const outT = outputType.value;
+            
+            updateStats(val);
+            outputArea.classList.remove('error-glow');
+
+            if (!val) {
+                outputArea.value = "";
+                return;
+            }
+
+            try {
+                let normalizedText = "";
+                
+                switch(inT) {
+                    case "text": normalizedText = val; break;
+                    case "bin":
+                        normalizedText = val.replace(/\s+/g, '').match(/.{1,8}/g)?.map(b => String.fromCharCode(parseInt(b, 2))).join('') || "";
+                        break;
+                    case "hex":
+                        normalizedText = val.replace(/\s+/g, '').match(/.{1,2}/g)?.map(h => String.fromCharCode(parseInt(h, 16))).join('') || "";
+                        break;
+                    case "dec":
+                        normalizedText = val.split(/\s+/).map(d => String.fromCharCode(parseInt(d, 10))).join('');
+                        break;
+                    case "oct":
+                        normalizedText = val.split(/\s+/).map(o => String.fromCharCode(parseInt(o, 8))).join('');
+                        break;
+                    case "b64": normalizedText = decodeURIComponent(escape(atob(val))); break;
+                    case "url": normalizedText = decodeURIComponent(val); break;
+                    case "morse":
+                        normalizedText = val.split(' ').map(m => revMorseDict[m] || '').join('');
+                        break;
+                    case "rot13":
+                        normalizedText = val.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+                        break;
+                    case "html":
+                        const txt = document.createElement("textarea");
+                        txt.innerHTML = val;
+                        normalizedText = txt.value;
+                        break;
+                }
+
+                let finalResult = "";
+                
+                switch(outT) {
+                    case "text": finalResult = normalizedText; break;
+                    case "bin":
+                        finalResult = Array.from(normalizedText).map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+                        break;
+                    case "hex":
+                        finalResult = Array.from(normalizedText).map(c => c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase()).join(' ');
+                        break;
+                    case "dec":
+                        finalResult = Array.from(normalizedText).map(c => c.charCodeAt(0).toString(10)).join(' ');
+                        break;
+                    case "oct":
+                        finalResult = Array.from(normalizedText).map(c => c.charCodeAt(0).toString(8).padStart(3, '0')).join(' ');
+                        break;
+                    case "b64": finalResult = btoa(unescape(encodeURIComponent(normalizedText))); break;
+                    case "url": finalResult = encodeURIComponent(normalizedText); break;
+                    case "morse":
+                        finalResult = Array.from(normalizedText.toUpperCase()).map(c => morseDict[c] || c).join(' ');
+                        break;
+                    case "rot13":
+                        finalResult = normalizedText.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+                        break;
+                    case "html":
+                        finalResult = normalizedText.replace(/[\u00A0-\u9999<>\&]/g, i => '&#'+i.charCodeAt(0)+';');
+                        break;
+                }
+
+                if (finalResult.includes("NaN") || finalResult === undefined) throw new Error();
+                outputArea.value = finalResult;
+
+            } catch (e) {
+                outputArea.value = "/// SYNTAX ERROR: Invalid input format for selected engine ///";
+                outputArea.classList.add('error-glow');
+            }
+        }
+
+        function copyToClipboard() {
+            if (!outputArea.value || outputArea.classList.contains('error-glow')) return;
+            
+            outputArea.select();
+            document.execCommand('copy');
+            
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+    <style>
+  /* Updated to fixed positioning at the top right */
+  .teleport-btn-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+  }
+
+  .teleport-btn {
+    position: relative;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(90deg, #8b5cf6, #00d2ff);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    z-index: 1;
+  }
+
+  /* The Light Blade Sweep Effect */
+  .teleport-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; 
+    left: -150%; 
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+  }
+
+  /* Hover States */
+  .teleport-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.6), 0 0 40px rgba(139, 92, 246, 0.5);
+    color: #ffffff;
+  }
+
+  .teleport-btn:hover::before {
+    left: 150%;
+  }
+
+  .teleport-btn:active {
+    transform: translateY(2px) scale(0.98);
+  }
+
+  /* Dynamic Sparkle Particle CSS */
+  .sparkle-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffffff, 0 0 20px #00d2ff, 0 0 30px #8b5cf6;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+    animation: explode 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  @keyframes explode {
+    0% { transform: scale(0) translate(0, 0); opacity: 1; }
+    100% { transform: scale(1.5) translate(var(--tx), var(--ty)); opacity: 0; }
+  }
+</style>
+
+<div class="teleport-btn-container">
+  <button class="teleport-btn" onclick="teleportToOS(event)">
+    Wanna try out our windows 12 concept? click this button
+  </button>
+</div>
+
+<script>
+  function teleportToOS(e) {
+    const btn = e.currentTarget;
+    const container = btn.parentElement;
+    
+    // Generate a massive burst of sparkles
+    for(let i = 0; i < 20; i++) {
+      createSparkle(container, btn);
+    }
+
+    // Give the user 0.8 seconds to see the cool explosion before actually changing the page
+    setTimeout(() => {
+        // IMPORTANT: Make sure your OS file is in the same folder!
+        window.location.href = 'windows-12concept.html'; 
+    }, 800);
+  }
+
+  function createSparkle(container, btn) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle-particle');
+    
+    // Start the sparkle somewhere inside the button
+    const startX = (Math.random() * btn.offsetWidth);
+    const startY = (Math.random() * btn.offsetHeight);
+    
+    // Calculate a random explosion trajectory outwards
+    const distance = 80 + Math.random() * 100;
+    const angle = Math.random() * Math.PI * 2;
+    const tx = Math.cos(angle) * distance + 'px';
+    const ty = Math.sin(angle) * distance + 'px';
+    
+    // Apply coordinates
+    sparkle.style.left = startX + 'px';
+    sparkle.style.top = startY + 'px';
+    sparkle.style.setProperty('--tx', tx);
+    sparkle.style.setProperty('--ty', ty);
+    
+    container.appendChild(sparkle);
+    
+    // Delete the particle from the DOM after the animation finishes
+    setTimeout(() => sparkle.remove(), 1000);
+  }
+</script>
+</body>
+</html>
